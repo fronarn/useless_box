@@ -49,17 +49,18 @@
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
-TIM_HandleTypeDef Timer2;
-
+TIM_HandleTypeDef Timer3;
+TIM_OC_InitTypeDef sConfig;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-void HAL_TIM_IRQHandler(TIM_HandleTypeDef*);
+//void HAL_TIM_IRQHandler(TIM_HandleTypeDef*);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
-
+void init_chenille(GPIO_TypeDef  *GPIOx, uint16_t pin, uint32_t channel);
+void avancer(int vitesse);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
@@ -67,7 +68,7 @@ void HAL_TIM_IRQHandler(TIM_HandleTypeDef*);
 /* USER CODE END 0 */
 
 int main(void)
-{
+ {
 
   /* USER CODE BEGIN 1 */
 
@@ -93,45 +94,13 @@ int main(void)
   MX_GPIO_Init();
 
   /* USER CODE BEGIN 2 */
-	
-	
-	// Partie 1
-/*	Timer2.Instance = TIM2;
-	Timer2.Init.Prescaler = 1125-1;
-	Timer2.Init.Period = 32000-1;
-
-	HAL_TIM_Base_MspInit(&Timer2);
-	__HAL_RCC_TIM2_CLK_ENABLE();
-	HAL_TIM_Base_Init(&Timer2);
-	HAL_TIM_Base_Start(&Timer2);
-	
-	HAL_TIM_Base_Start_IT(&Timer2);
-	HAL_NVIC_SetPriority(TIM2_IRQn, 2, 2);
-	HAL_NVIC_EnableIRQ(TIM2_IRQn); */
-	
-	//Partie 2
-	GPIO_InitTypeDef GPIO_InitStruct;
-	
-	GPIO_InitStruct.Pin = GPIO_PIN_0;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	
-	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-	
-	Timer2.Instance = TIM2;
-	Timer2.Init.Prescaler = 100-1;
-	Timer2.Init.Period = 14400-1;
-	
-	HAL_TIM_PWM_MspInit(&Timer2);
-	__HAL_RCC_TIM2_CLK_ENABLE();
-	HAL_TIM_PWM_Init(&Timer2);
-	
-	TIM_OC_InitTypeDef sConfig;
-	sConfig.OCMode = TIM_OCMODE_PWM1;
-	sConfig.Pulse = (int)(Timer2.Init.Period * 98 / 100);
-	HAL_TIM_PWM_ConfigChannel(&Timer2, &sConfig, TIM_CHANNEL_1);
-	HAL_TIM_PWM_Start(&Timer2, TIM_CHANNEL_1);
+	init_chenille(GPIOC, GPIO_PIN_0, TIM_CHANNEL_1); //jaune
+	init_chenille(GPIOC, GPIO_PIN_1, TIM_CHANNEL_2); //violet
+	init_chenille(GPIOC, GPIO_PIN_2, TIM_CHANNEL_3); //noir
+	init_chenille(GPIOC, GPIO_PIN_3, TIM_CHANNEL_4); //rouge
+		
+	avancer(70);
+		
 
   /* USER CODE END 2 */
 
@@ -140,7 +109,11 @@ int main(void)
   while (1)
   {
   /* USER CODE END WHILE */
-
+		
+		
+		
+	
+		
   /* USER CODE BEGIN 3 */
 
   }
@@ -198,9 +171,46 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
-{	
-	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+//void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
+//{	
+//	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+//}
+
+void init_chenille(GPIO_TypeDef  *GPIOx, uint16_t pin, uint32_t channel) {
+	GPIO_InitTypeDef GPIO_InitStruct;
+	
+	GPIO_InitStruct.Pin = pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	
+	HAL_GPIO_Init(GPIOx, &GPIO_InitStruct);
+	
+
+	
+	Timer3.Instance = TIM3;
+	Timer3.Init.Prescaler = 100-1;
+	Timer3.Init.Period = 14400-1;
+	
+	HAL_TIM_PWM_MspInit(&Timer3);
+	__HAL_RCC_TIM3_CLK_ENABLE();
+	HAL_TIM_PWM_Init(&Timer3);
+	
+	sConfig.OCMode = TIM_OCMODE_PWM1;
+	sConfig.Pulse = (int)(Timer3.Init.Period * 0 / 100);
+	HAL_TIM_PWM_ConfigChannel(&Timer3, &sConfig, channel);
+	HAL_TIM_PWM_Start(&Timer3, channel);
+}
+
+void avancer(int vitesse) {
+	
+	sConfig.Pulse = (int)(Timer3.Init.Period * vitesse / 100);
+	HAL_TIM_PWM_ConfigChannel(&Timer3, &sConfig, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&Timer3, TIM_CHANNEL_1);
+	sConfig.Pulse = (int)(Timer3.Init.Period * vitesse / 100);
+	HAL_TIM_PWM_ConfigChannel(&Timer3, &sConfig, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Start(&Timer3, TIM_CHANNEL_2);
+	
 }
 
 /* USER CODE END 4 */

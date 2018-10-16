@@ -83,10 +83,10 @@ void EXTI15_10_IRQHandler(void)
 
 /* USER CODE BEGIN 1 */
 
-void TIM2_IRQHandler(void)
+void TIM3_IRQHandler(void)
 {
-	extern TIM_HandleTypeDef Timer2;
-	HAL_TIM_IRQHandler(&Timer2);
+	extern TIM_HandleTypeDef Timer3;
+	HAL_TIM_IRQHandler(&Timer3);
 }
 
 /* USER CODE END 1 */
