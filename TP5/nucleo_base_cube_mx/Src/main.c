@@ -94,10 +94,10 @@ int main(void)
   MX_GPIO_Init();
 
   /* USER CODE BEGIN 2 */
-	init_chenille(GPIOC, GPIO_PIN_0, TIM_CHANNEL_1); //jaune
-	init_chenille(GPIOC, GPIO_PIN_1, TIM_CHANNEL_2); //violet
-	init_chenille(GPIOC, GPIO_PIN_2, TIM_CHANNEL_3); //noir
-	init_chenille(GPIOC, GPIO_PIN_3, TIM_CHANNEL_4); //rouge
+	init_chenille(GPIOA, GPIO_PIN_6, TIM_CHANNEL_1); //jaune - avant gauche
+	init_chenille(GPIOA, GPIO_PIN_7, TIM_CHANNEL_2); //violet - avant droite
+	init_chenille(GPIOB, GPIO_PIN_1, TIM_CHANNEL_3); //noir
+	init_chenille(GPIOB, GPIO_PIN_2, TIM_CHANNEL_4); //rouge
 		
 	avancer(70);
 		
@@ -197,7 +197,7 @@ void init_chenille(GPIO_TypeDef  *GPIOx, uint16_t pin, uint32_t channel) {
 	HAL_TIM_PWM_Init(&Timer3);
 	
 	sConfig.OCMode = TIM_OCMODE_PWM1;
-	sConfig.Pulse = (int)(Timer3.Init.Period * 0 / 100);
+	sConfig.Pulse = (int)(Timer3.Init.Period * 50 / 100);
 	HAL_TIM_PWM_ConfigChannel(&Timer3, &sConfig, channel);
 	HAL_TIM_PWM_Start(&Timer3, channel);
 }
